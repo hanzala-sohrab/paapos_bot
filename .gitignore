@@ -1,0 +1,15 @@
+.vscode/
+foo.py
+.config/
+*.pdf
+*.png
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+
+service_account.json
+paapos_bot/
+__pycache__/
+
+*.log
