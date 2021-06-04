@@ -826,7 +826,7 @@ def home():
                     collectableAmt = "0"
                     if orderType == "COD":
                         collectableAmt = user['CollectibleAmount']
-                    declaredValue = user['DeclaredValue']
+                    declaredValue = str(float(user['DeclaredValue']) * float(qty))
                     billWt = user['billwt']
                     wt = user['PhyWeight']
                     providerID = user['provider']
@@ -1536,7 +1536,7 @@ def home():
                     collectableAmt = "0"
                     if orderType == "COD":
                         collectableAmt = user['CollectibleAmount']
-                    declaredValue = user['DeclaredValue']
+                    declaredValue = str(float(user['DeclaredValue']) * float(qty))
                     billWt = user['billwt']
                     dimensions = user['dim']
                     if " " in dimensions:
