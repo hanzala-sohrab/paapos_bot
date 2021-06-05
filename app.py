@@ -94,16 +94,6 @@ def get_rate_card(dim, amt, wt, sender, receiver, cid, ct, pin=""):
         data["H"] = dim['height']
     
     data = json.dumps(data)
-    # print("\n", data, "\n")
-    # current_time = datetime.now()
-    # c_time = str(current_time)[11:]
-    # current_datetime = f"{current_time.day}.{current_time.month}.{current_time.year} {c_time}"
-    # with open("server.log", "a") as server:
-    #     server.write("---------------------------\n")
-    #     server.write(current_datetime)
-    #     server.write("\n")
-    #     server.write(data)
-    #     server.write("\n")
 
     resp = requests.post(url, headers=headers, data=data).text
     return json.loads(resp)
@@ -121,16 +111,6 @@ def cancel_order(manifestId, reason):
     }
 
     data = json.dumps(data)
-    # print(data)
-    # current_time = datetime.now()
-    # c_time = str(current_time)[11:]
-    # current_datetime = f"{current_time.day}.{current_time.month}.{current_time.year} {c_time}"
-    # with open("server.log", "a") as server:
-    #     server.write("---------------------------\n")
-    #     server.write(current_datetime)
-    #     server.write("\n")
-    #     server.write(data)
-    #     server.write("\n")
 
     resp = requests.post(url, headers=headers, data=data).text
     return json.loads(resp)
@@ -147,21 +127,11 @@ def track_order(AWBNo):
     }
 
     data = json.dumps(data)
-    # print(data)
-    # current_time = datetime.now()
-    # c_time = str(current_time)[11:]
-    # current_datetime = f"{current_time.day}.{current_time.month}.{current_time.year} {c_time}"
-    # with open("server.log", "a") as server:
-    #     server.write("---------------------------\n")
-    #     server.write(current_datetime)
-    #     server.write("\n")
-    #     server.write(data)
-    #     server.write("\n")
 
     resp = requests.post(url, headers=headers, data=data).text
     return json.loads(resp)
 
-def book_courier(CID, OrderType, OrderNo, PaymentStatus, PickupVendor, PickVendorPhoneNo, PickVendorAddress, PickVendorCity, PickVendorState, PickVendorPinCode, CustomerName, CustomerCity, CustomerState, ZipCode, CustomerAddress, CustomerMobileNo, CollectibleAmount, DeclaredValue, BillableWeight, VolWeight, PhyWeight, ShipLength, ShipWidth, ShipHeight, Quantity, Provider, OrderID, IsCod, CourierCharges, RateId, ProductJson, Tax, BP, CDiscount, CtoP, Coupon, Insurance=0):
+def book_courier(CID, OrderType, OrderNo, PaymentStatus, PickupVendor, PickVendorPhoneNo, PickVendorAddress, PickVendorCity, PickVendorState, PickVendorPinCode, CustomerName, CustomerCity, CustomerState, ZipCode, CustomerAddress, CustomerMobileNo, CollectibleAmount, DeclaredValue, BillableWeight, VolWeight, PhyWeight, ShipLength, ShipWidth, ShipHeight, Quantity, Provider, OrderID, IsCod, CourierCharges, RateId, ProductJson, Tax, BP, CDiscount, CtoP, Coupon, Insurance=0, DCPO='W'):
     url = foo.bookCourier
 
     headers = CaseInsensitiveDict()
@@ -205,20 +175,11 @@ def book_courier(CID, OrderType, OrderNo, PaymentStatus, PickupVendor, PickVendo
         "CDiscount": CDiscount,
         "CtoP": str(CtoP),
         "Coupon": Coupon,
-        "Insurance": Insurance
+        "Insurance": Insurance,
+        "DCPO": DCPO
     }
 
     data = json.dumps(data)
-    # print("\n", data, "\n")
-    # current_time = datetime.now()
-    # c_time = str(current_time)[11:]
-    # current_datetime = f"{current_time.day}.{current_time.month}.{current_time.year} {c_time}"
-    # with open("server.log", "a") as server:
-    #     server.write("---------------------------\n")
-    #     server.write(current_datetime)
-    #     server.write("\n")
-    #     server.write(data)
-    #     server.write("\n")
 
     resp = requests.post(url, headers=headers, data=data).text
     return json.loads(resp)
@@ -236,16 +197,6 @@ def service_check(pin, origin):
     }
 
     data = json.dumps(data)
-    # print(data)
-    # current_time = datetime.now()
-    # c_time = str(current_time)[11:]
-    # current_datetime = f"{current_time.day}.{current_time.month}.{current_time.year} {c_time}"
-    # with open("server.log", "a") as server:
-    #     server.write("---------------------------\n")
-    #     server.write(current_datetime)
-    #     server.write("\n")
-    #     server.write(data)
-    #     server.write("\n")
 
     resp = requests.post(url, headers=headers, data=data).text
     return json.loads(resp)
@@ -264,7 +215,6 @@ def home():
                 new_user = {'_id': int(phone), 'returnMessage': "Foo"}
                 db_operations.insert_one(new_user)
                 user = db_operations.find_one({'_id': int(phone)})
-            # print("\n", user, "\n")
             try:
                 value = user['returnMessage']
             except:
@@ -282,8 +232,6 @@ def home():
                     }
                     db_operations.insert_one(new_user)
                     user = db_operations.find_one({'_id': int(phone)})
-                    # updated_user = {"$set": {'CT' : "C", "cid": resp['Cid']}}
-                    # db_operations.update_one(user, updated_user)
                     returnMessage = "Welcome to paapos, your preferred delivery partner\n\nTo Book Same Day Order Reply 1\nTo Book Courier Reply 2\nTo Track Your Order Reply 3\nTo cancel your order reply 4\nTo connect with our Executive reply 5\nFor feedback reply 6\n\nFor the main menu, type *0*\nFor the previous menu, type *9*"
                 updated_user = {"$set": {'returnMessage' : returnMessage}}
                 db_operations.update_one(user, updated_user)
@@ -292,8 +240,6 @@ def home():
                 if message == '1':
                     returnMessage = "Please Select Your City\n\nFor Delhi Reply 1\nFor Noida Reply 2\nFor Gurgaon Reply 3\nFor Ghaziabad Reply 4\nFor Greater Noida Reply 5\nFor Faridabad Reply 6\nFor help dial 93782 93782"
                     updated_user = {"$set": {'returnMessage' : returnMessage, 'CT': "S"}}
-                    # db_operations.update_one(user, updated_user)
-                    # updated_user = {"$set": {'returnMessage' : returnMessage}}
                     db_operations.update_one(user, updated_user)
                     return send_message(message=returnMessage, phone=phone)
                 elif message == '2':
@@ -413,31 +359,11 @@ def home():
                         updated_user = {"$set": {'returnMessage' : returnMessage, 'PickVendorPinCode' : message}}
                         db_operations.update_one(user, updated_user)
                         return send_message(message=returnMessage, phone=phone)
-                        # resp = service_check(pin=message, origin="1")
-                        # if resp['ReplyCode'] == 0:
-                        #     repMsg = resp['ReplyMsg'].split("~")
-                        #     _id = repMsg[0]
-                        #     city = repMsg[1]
-                        #     state = repMsg[2]
-                        #     returnMessage = "Please Select Drop City\n\nFor Delhi Reply 1\nFor Noida Reply 2\nFor Gurgaon Reply 3\nFor Ghaziabad Reply 4\nFor Greater Noida Reply 5\nFor Faridabad Reply 6\nFor help dial 93782 93782"
-                        #     updated_user = {"$set": {'returnMessage' : returnMessage, 'PickVendorPinCode' : message}}
-                        #     db_operations.update_one(user, updated_user)
-                        #     return send_message(message=returnMessage, phone=phone)
-                        # else:
-                        #     returnMessage = "Pickup Service not available. Enter Pickup PinCode again"
-                        #     updated_user = {"$set": {'returnMessage' : returnMessage}}
-                        #     db_operations.update_one(user, updated_user)
-                        #     return send_message(message=returnMessage, phone=phone)
                     except:
                         returnMessage = "Incorrect Pickup Pincode. Enter Pickup PinCode\nFor help dial 93782 93782"
                         updated_user = {"$set": {'returnMessage' : returnMessage}}
                         db_operations.update_one(user, updated_user)
                         return send_message(message=returnMessage, phone=phone)
-            # elif "Pickup Service not available" in value:
-            #     returnMessage = "Enter Pickup PinCode"
-            #     updated_user = {"$set": {'returnMessage' : returnMessage}}
-            #     db_operations.update_one(user, updated_user)
-            #     return send_message(message=returnMessage, phone=phone)
             elif "Please Select Drop City" in value:
                 cities = ["Delhi", "Noida", "Gurgaon", "Ghaziabad", "Greater Noida", "Faridabad"]
                 if message == '9':
@@ -526,31 +452,11 @@ def home():
                         updated_user = {"$set": {'returnMessage' : returnMessage, 'ZipCode' : message}}
                         db_operations.update_one(user, updated_user)
                         return send_message(message=returnMessage, phone=phone)
-                        # resp = service_check(pin=message, origin="0")
-                        # if resp['ReplyCode'] == 0:
-                        #     repMsg = resp['ReplyMsg'].split("~")
-                        #     _id = repMsg[0]
-                        #     city = repMsg[1]
-                        #     state = repMsg[2]
-                        #     returnMessage = "*Please Select Packet Type*\nFor Food reply 1\nFor Medicines reply 2\nFor Groceries reply 3\nFor Clothes reply 4\nFor Documents reply 5\nFor Electronics reply 6\nFor Others reply 7"
-                        #     updated_user = {"$set": {'returnMessage' : returnMessage, 'ZipCode' : message}}
-                        #     db_operations.update_one(user, updated_user)
-                        #     return send_message(message=returnMessage, phone=phone)
-                        # else:
-                        #     returnMessage = "Drop Service not available! Enter Drop Pincode again"
-                        #     updated_user = {"$set": {'returnMessage' : returnMessage}}
-                        #     db_operations.update_one(user, updated_user)
-                        #     return send_message(message=returnMessage, phone=phone)
                     except:
                         returnMessage = "Incorrect Drop Pincode. Enter Drop PinCode\nFor help dial 93782 93782"
                         updated_user = {"$set": {'returnMessage' : returnMessage}}
                         db_operations.update_one(user, updated_user)
                         return send_message(message=returnMessage, phone=phone)
-            # elif "Drop Service not available" in value:
-            #     returnMessage = "Enter Drop Pincode"
-            #     updated_user = {"$set": {'returnMessage' : returnMessage}}
-            #     db_operations.update_one(user, updated_user)
-            #     return send_message(message=returnMessage, phone=phone)
             elif "Please Select Packet Type" in value and user["CT"] == "S":
                 packets = ["Food", "Medicines", "Groceries", "Clothes", "Documents", "Electronics", "Others"]
                 if message == '9':
@@ -633,6 +539,7 @@ def home():
                     try:
                         qty = int(message)
                         returnMessage = "Do you want us to collect payment from the customer for the products you are sending?\nFor yes reply 1\nFor no reply 2"
+                        # returnMessage = "To pay delivery charges\nAt pickup location, reply *1*\nAt drop location, reply *2*\nFrom wallet, reply *3*"
                         updated_user = {"$set": {'returnMessage' : returnMessage, 'Quantity' : message}}
                         db_operations.update_one(user, updated_user)
                         return send_message(message=returnMessage, phone=phone)
@@ -746,7 +653,8 @@ def home():
                 else:
                     providers = json.loads(user['providers'])
                     provider = providers[int(message) - 1]
-                    returnMessage = "Enter coupon code (if any) or type *No* if you don't have one"
+                    # returnMessage = "Enter coupon code (if any) or type *No* if you don't have one"
+                    returnMessage = "To pay delivery charges\nAt pickup location, reply *1*\nAt drop location, reply *2*\nFrom wallet, reply *3*"
                     updated_user = {
                         "$set": {
                             'rateid' : provider['rateid'],
@@ -768,9 +676,28 @@ def home():
                         updated_user = {"$set": {'Codcharge' : provider['Codcharge']}}
                         db_operations.update_one(user, updated_user)
                     return send_message(message=returnMessage, phone=phone)
-            elif "Enter coupon code (if any)" in value and user["CT"] == "S":
+            elif "To pay delivery charges" in value:
                 if message == '9':
                     returnMessage = "Enter the index of the service provider of your choice"
+                    updated_user = {"$set": {'returnMessage' : returnMessage}}
+                    db_operations.update_one(user, updated_user)
+                    return send_message(message=returnMessage, phone=phone)
+                elif message in ['1', '2', '3']:
+                    payment = ['P', 'D', 'W']
+                    returnMessage = "Enter coupon code (if any) or type *No* if you don't have one"
+                    i = int(message) - 1
+                    updated_user = {"$set": {'returnMessage' : returnMessage, 'DCPO': payment[i]}}
+                    db_operations.update_one(user, updated_user)
+                    return send_message(message=returnMessage, phone=phone)
+                else:
+                    returnMessage = "Invalid entry!\nTo pay delivery charges\nAt pickup location, reply *1*\nAt drop location, reply *2*\nFrom wallet, reply *3*"
+                    updated_user = {"$set": {'returnMessage' : returnMessage}}
+                    db_operations.update_one(user, updated_user)
+                    return send_message(message=returnMessage, phone=phone)
+            elif "Enter coupon code (if any)" in value and user["CT"] == "S":
+                if message == '9':
+                    # returnMessage = "Enter the index of the service provider of your choice"
+                    returnMessage = "To pay delivery charges\nAt pickup location, reply *1*\nAt drop location, reply *2*\nFrom wallet, reply *3*"
                     updated_user = {"$set": {'returnMessage' : returnMessage}}
                     db_operations.update_one(user, updated_user)
                     return send_message(message=returnMessage, phone=phone)
@@ -889,7 +816,8 @@ def home():
                         CDiscount=cDiscount,
                         CtoP=cTop,
                         Coupon=coupon,
-                        Insurance=user["Insurance"]
+                        Insurance=user["Insurance"],
+                        DCPO=user['DCPO']
                     )
                     if resp['ReplyCode'] == 0:
                         returnMessage = f"Booking successful\n\nHere's your AWBNo (Airway Bill Number)\n*{resp['AWBno']}\n\nhttps://paapos.com/OLabel.aspx?AWBno={resp['AWBno']}"
@@ -1488,13 +1416,33 @@ def home():
                 if user['IsCod'] == '1':
                     updated_user = {"$set": {'Codcharge' : provider['Codcharge']}}
                     db_operations.update_one(user, updated_user)
-                returnMessage = "Enter coupon code (if any) or type *No* if you don't have one"
+                # returnMessage = "Enter coupon code (if any) or type *No* if you don't have one"
+                returnMessage = "To pay Delivery charges\nAt pickup location, reply *1*\nAt drop location, reply *2*\nFrom wallet, reply *3*"
                 updated_user = {"$set": {'returnMessage' : returnMessage}}
                 db_operations.update_one(user, updated_user)
                 return send_message(message=returnMessage, phone=phone)
-            elif "Enter coupon code (if any)" in value:
+            elif "To pay Delivery charges" in value:
                 if message == '9':
                     returnMessage = "Enter the index of the service provider of your choice"
+                    updated_user = {"$set": {'returnMessage' : returnMessage}}
+                    db_operations.update_one(user, updated_user)
+                    return send_message(message=returnMessage, phone=phone)
+                elif message in ['1', '2', '3']:
+                    payment = ['P', 'D', 'W']
+                    returnMessage = "Enter coupon code (if any) or type *No* if you don't have one"
+                    i = int(message) - 1
+                    updated_user = {"$set": {'returnMessage' : returnMessage, 'DCPO': payment[i]}}
+                    db_operations.update_one(user, updated_user)
+                    return send_message(message=returnMessage, phone=phone)
+                else:
+                    returnMessage = "Invalid entry!\nTo pay Delivery charges\nAt pickup location, reply *1*\nAt drop location, reply *2*\nFrom wallet, reply *3*"
+                    updated_user = {"$set": {'returnMessage' : returnMessage}}
+                    db_operations.update_one(user, updated_user)
+                    return send_message(message=returnMessage, phone=phone)
+            elif "Enter coupon code (if any)" in value:
+                if message == '9':
+                    # returnMessage = "Enter the index of the service provider of your choice"
+                    returnMessage = "To pay Delivery charges\nAt pickup location, reply *1*\nAt drop location, reply *2*\nFrom wallet, reply *3*"
                 else:
                     updated_user = {"$set": {'Coupon' : message}}
                     db_operations.update_one(user, updated_user)
@@ -1614,7 +1562,8 @@ def home():
                         CDiscount=cDiscount,
                         CtoP=cTop,
                         Coupon=coupon,
-                        Insurance=0
+                        Insurance=0,
+                        DCPO=user['DCPO']
                     )
                     if resp['ReplyCode'] == 0:
                         returnMessage = f"Booking successful\n\nHere's your AWBNo (Airway Bill Number)\n*{resp['AWBno']}*\n\nhttps://paapos.com/OLabel.aspx?AWBno={resp['AWBno']}"
