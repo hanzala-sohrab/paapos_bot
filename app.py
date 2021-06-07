@@ -671,9 +671,9 @@ def home():
                             'ProviderName': provider['ProviderName'],
                             'RateName': provider['RateName'],
                             'billwt': provider['billwt'],
-                            'P_latlng': provider['P_latlng'],
-                            'D_latlng': provider['D_latlng'],
-                            'Distance': provider['Distance'],
+                            'P_latlng': providers['P_latlng'],
+                            'D_latlng': providers['D_latlng'],
+                            'Distance': providers['Distance'],
                             'returnMessage' : returnMessage
                         }
                     }
@@ -792,7 +792,7 @@ def home():
                         PaymentStatus=paymentStatus, 
                         PickupVendor=sender['name'], 
                         PickVendorPhoneNo=sender['phone'], 
-                        PickVendorAddress=sender['area'], 
+                        PickVendorAddress=sender['address'], 
                         PickVendorCity=sender['city'], 
                         PickVendorState=sender['state'], 
                         PickVendorPinCode=sender['pin'], 
@@ -800,7 +800,7 @@ def home():
                         CustomerCity=receiver['city'], 
                         CustomerState= receiver['state'], 
                         ZipCode= receiver['pin'], 
-                        CustomerAddress= receiver['area'], 
+                        CustomerAddress= receiver['address'], 
                         CustomerMobileNo= receiver['phone'], 
                         CollectibleAmount= collectableAmt, 
                         DeclaredValue=declaredValue, 
@@ -1419,9 +1419,9 @@ def home():
                         'ProviderName': provider['ProviderName'],
                         'RateName': provider['RateName'],
                         'billwt': provider['billwt'],
-                        'P_latlng': provider['P_latlng'],
-                        'D_latlng': provider['D_latlng'],
-                        'Distance': provider['Distance']
+                        'P_latlng': providers['P_latlng'],
+                        'D_latlng': providers['D_latlng'],
+                        'Distance': providers['Distance']
                     }
                 }
                 db_operations.update_one(user, updated_user)
