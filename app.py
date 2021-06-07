@@ -1664,7 +1664,7 @@ def home():
                     returnMessage = "_" + resp['ReplyMsg'] + "_"
                     if resp['ReplyCode'] == 0:
                         returnMessage += "\n\n*SUMMARY*\n"
-                        summary = resp['ShipSum']
+                        summary = json.loads(resp['ShipSum'])
                         returnMessage += "Status date: " + summary['StatusDate'] + "\n"
                         returnMessage += "Status time: " + summary['StatusTime'] + "\n"
                         returnMessage += "Status: " + summary['Status'] + "\n"
