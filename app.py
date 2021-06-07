@@ -1662,7 +1662,7 @@ def home():
                 else:
                     resp = track_order(AWBNo=message)
                     returnMessage = "_" + resp['ReplyMsg'] + "_"
-                    if resp['ReplyCode'] == '0':
+                    if resp['ReplyCode'] == 0:
                         returnMessage += "\n\n*SUMMARY*\n"
                         summary = resp['ShipSum']
                         returnMessage += "Status date: " + summary['StatusDate'] + "\n"
