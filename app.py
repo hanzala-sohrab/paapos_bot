@@ -617,7 +617,7 @@ def home():
                     if resp['ReplyCode'] == 0:
                         returnMessage = "_Available providers_\n\n"
                         providers = resp['Providers']
-                        updated_user = {"$set": {'providers' : json.dumps(providers)}}
+                        updated_user = {"$set": {'providers' : json.dumps(providers), 'P_latlng': resp['P_latlng'], 'D_latlng': resp['D_latlng'], 'Distance': resp['Distance']}}
                         db_operations.update_one(user, updated_user)
                         i = 1
                         for provider in providers:
@@ -671,9 +671,6 @@ def home():
                             'ProviderName': provider['ProviderName'],
                             'RateName': provider['RateName'],
                             'billwt': provider['billwt'],
-                            'P_latlng': providers['P_latlng'],
-                            'D_latlng': providers['D_latlng'],
-                            'Distance': providers['Distance'],
                             'returnMessage' : returnMessage
                         }
                     }
@@ -1017,7 +1014,7 @@ def home():
                         if resp['ReplyCode'] == 0:
                             returnMessage = "_Data found_\n\nAvailable providers\n"
                             providers = resp['Providers']
-                            updated_user = {"$set": {'Providers' : json.dumps(providers)}}
+                            updated_user = {"$set": {'providers' : json.dumps(providers), 'P_latlng': resp['P_latlng'], 'D_latlng': resp['D_latlng'], 'Distance': resp['Distance']}}
                             db_operations.update_one(user, updated_user)
                             i = 1
                             for provider in providers:
@@ -1071,7 +1068,7 @@ def home():
                     if resp['ReplyCode'] == 0:
                         returnMessage = "_Data found_\n\nAvailable providers\n\n"
                         providers = resp['Providers']
-                        updated_user = {"$set": {'Providers' : json.dumps(providers)}}
+                        updated_user = {"$set": {'providers' : json.dumps(providers), 'P_latlng': resp['P_latlng'], 'D_latlng': resp['D_latlng'], 'Distance': resp['Distance']}}
                         db_operations.update_one(user, updated_user)
                         i = 1
                         for provider in providers:
@@ -1386,7 +1383,7 @@ def home():
                     if resp['ReplyCode'] == 0:
                         returnMessage = "_Data found_\n\nAvailable providers\n\n"
                         providers = resp['Providers']
-                        updated_user = {"$set": {'Providers' : json.dumps(providers)}}
+                        updated_user = {"$set": {'providers' : json.dumps(providers), 'P_latlng': resp['P_latlng'], 'D_latlng': resp['D_latlng'], 'Distance': resp['Distance']}}
                         db_operations.update_one(user, updated_user)
                         i = 1
                         for provider in providers:
@@ -1418,10 +1415,7 @@ def home():
                         'miniwt': provider['miniwt'],
                         'ProviderName': provider['ProviderName'],
                         'RateName': provider['RateName'],
-                        'billwt': provider['billwt'],
-                        'P_latlng': providers['P_latlng'],
-                        'D_latlng': providers['D_latlng'],
-                        'Distance': providers['Distance']
+                        'billwt': provider['billwt']
                     }
                 }
                 db_operations.update_one(user, updated_user)
