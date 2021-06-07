@@ -131,7 +131,7 @@ def track_order(AWBNo):
     resp = requests.post(url, headers=headers, data=data).text
     return json.loads(resp)
 
-def book_courier(CID, OrderType, OrderNo, PaymentStatus, PickupVendor, PickVendorPhoneNo, PickVendorAddress, PickVendorCity, PickVendorState, PickVendorPinCode, CustomerName, CustomerCity, CustomerState, ZipCode, CustomerAddress, CustomerMobileNo, CollectibleAmount, DeclaredValue, BillableWeight, VolWeight, PhyWeight, ShipLength, ShipWidth, ShipHeight, Quantity, Provider, OrderID, IsCod, CourierCharges, RateId, ProductJson, Tax, BP, CDiscount, CtoP, Coupon, Insurance=0, DCPO='W'):
+def book_courier(CID, OrderType, OrderNo, PaymentStatus, PickupVendor, PickVendorPhoneNo, PickVendorAddress, PickVendorCity, PickVendorState, PickVendorPinCode, CustomerName, CustomerCity, CustomerState, ZipCode, CustomerAddress, CustomerMobileNo, CollectibleAmount, DeclaredValue, BillableWeight, VolWeight, PhyWeight, ShipLength, ShipWidth, ShipHeight, Quantity, Provider, OrderID, IsCod, CourierCharges, RateId, ProductJson, Tax, BP, CDiscount, CtoP, Coupon, P_latlng, D_latlng, Distance, Insurance=0, DCPO='W'):
     url = foo.bookCourier
 
     headers = CaseInsensitiveDict()
@@ -176,7 +176,10 @@ def book_courier(CID, OrderType, OrderNo, PaymentStatus, PickupVendor, PickVendo
         "CtoP": str(CtoP),
         "Coupon": Coupon,
         "Insurance": Insurance,
-        "DCPO": DCPO
+        "DCPO": DCPO,
+        "P_latlng": P_latlng,
+        "D_latlng": D_latlng,
+        "Distance": Distance
     }
 
     data = json.dumps(data)
@@ -668,6 +671,9 @@ def home():
                             'ProviderName': provider['ProviderName'],
                             'RateName': provider['RateName'],
                             'billwt': provider['billwt'],
+                            'P_latlng': provider['P_latlng'],
+                            'D_latlng': provider['D_latlng'],
+                            'Distance': provider['Distance'],
                             'returnMessage' : returnMessage
                         }
                     }
@@ -817,7 +823,10 @@ def home():
                         CtoP=cTop,
                         Coupon=coupon,
                         Insurance=user["Insurance"],
-                        DCPO=user['DCPO']
+                        DCPO=user['DCPO'],
+                        P_latlng=user['P_latlng'],
+                        D_latlng=user['D_latlng'],
+                        Distance=user['Distance']
                     )
                     if resp['ReplyCode'] == 0:
                         returnMessage = f"Booking successful\n\nHere's your AWBNo (Airway Bill Number)\n*{resp['AWBno']}\n\nhttps://paapos.com/OLabel.aspx?AWBno={resp['AWBno']}"
@@ -1409,7 +1418,10 @@ def home():
                         'miniwt': provider['miniwt'],
                         'ProviderName': provider['ProviderName'],
                         'RateName': provider['RateName'],
-                        'billwt': provider['billwt']
+                        'billwt': provider['billwt'],
+                        'P_latlng': provider['P_latlng'],
+                        'D_latlng': provider['D_latlng'],
+                        'Distance': provider['Distance']
                     }
                 }
                 db_operations.update_one(user, updated_user)
@@ -1563,7 +1575,10 @@ def home():
                         CtoP=cTop,
                         Coupon=coupon,
                         Insurance=0,
-                        DCPO=user['DCPO']
+                        DCPO=user['DCPO'],
+                        P_latlng=user['P_latlng'],
+                        D_latlng=user['D_latlng'],
+                        Distance=user['Distance']
                     )
                     if resp['ReplyCode'] == 0:
                         returnMessage = f"Booking successful\n\nHere's your AWBNo (Airway Bill Number)\n*{resp['AWBno']}*\n\nhttps://paapos.com/OLabel.aspx?AWBno={resp['AWBno']}"
