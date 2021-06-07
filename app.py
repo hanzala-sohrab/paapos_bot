@@ -1670,8 +1670,8 @@ def home():
                         returnMessage += "Status: " + summary['Status'] + "\n"
                         returnMessage += "Location: " + summary['Location'] + "\n"
                         returnMessage += "Comment: " + summary['Comment'] + "\n"
-                        returnMessage += "Status code: " + summary['StatusCode'] + "\n"
-                        returnMessage += "Weight: " + summary['Weight'] + "\n"
+                        # returnMessage += "Status code: " + summary['StatusCode'] + "\n"
+                        # returnMessage += "Weight: " + summary['Weight'] + "\n"
                     else:
                         returnMessage += "\n\nPlease enter correct tracking ID booked on Paapos."
                 updated_user = {"$set": {'returnMessage' : returnMessage}}
