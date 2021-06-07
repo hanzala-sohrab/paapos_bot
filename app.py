@@ -98,7 +98,7 @@ def get_rate_card(dim, amt, wt, sender, receiver, cid, ct, pin=""):
     resp = requests.post(url, headers=headers, data=data).text
     return json.loads(resp)
 
-def cancel_order(AWBNo, reason):
+def cancel_order(AWBNo, reason, CID):
     url = foo.cancelOrder
 
     headers = CaseInsensitiveDict()
@@ -107,7 +107,8 @@ def cancel_order(AWBNo, reason):
 
     data = {
         "AWBNo": AWBNo,
-        "Reason": reason
+        "Reason": reason,
+        "CID": CID
     }
 
     data = json.dumps(data)
@@ -1716,7 +1717,7 @@ def home():
                 else:
                     reason = message
                     AWBNo = user['AWBNo']
-                    resp = cancel_order(AWBNo=AWBNo, reason=reason)
+                    resp = cancel_order(AWBNo=AWBNo, reason=reason, CID=user['cid'])
                     if resp['ReplyCode'] == 0:
                         returnMessage = resp['ReplyMsg']
                     else:
