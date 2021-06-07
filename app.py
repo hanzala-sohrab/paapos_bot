@@ -98,7 +98,7 @@ def get_rate_card(dim, amt, wt, sender, receiver, cid, ct, pin=""):
     resp = requests.post(url, headers=headers, data=data).text
     return json.loads(resp)
 
-def cancel_order(manifestId, reason):
+def cancel_order(AWBNo, reason):
     url = foo.cancelOrder
 
     headers = CaseInsensitiveDict()
@@ -106,7 +106,7 @@ def cancel_order(manifestId, reason):
     headers["Content-Type"] = "application/json"
 
     data = {
-        "ManifestID": manifestId,
+        "AWBNo": AWBNo,
         "Reason": reason
     }
 
@@ -253,7 +253,7 @@ def home():
                     db_operations.update_one(user, updated_user)
                     return send_message(message=returnMessage, phone=phone)
                 elif message == '4':
-                    returnMessage = "Enter ManifestID"
+                    returnMessage = "Enter Airway Bill number (AWBNo)"
                     updated_user = {"$set": {'returnMessage' : returnMessage}}
                     db_operations.update_one(user, updated_user)
                     return send_message(message=returnMessage, phone=phone)
@@ -1690,27 +1690,27 @@ def home():
                 db_operations.update_one(user, updated_user)
                 return send_message(message=returnMessage, phone=phone)
             # 4 - Order cancellation
-            elif "ManifestID" in value:
+            elif "Enter Airway Bill number (AWBNo)" in value:
                 if message == '9':
                     returnMessage = "Welcome to paapos, your preferred delivery partner\n\nTo Book Same Day Order Reply 1\nTo Book Courier Reply 2\nTo Track Your Order Reply 3\nTo cancel your order reply 4\nTo connect with our Executive reply 5\nFor feedback reply 6\n\nFor the main menu, type *0*\nFor the previous menu, type *9*"
                 else:
                     returnMessage = "Enter the reason for cancellation"
-                    updated_user = {"$set": {'ManifestID' : message}}
+                    updated_user = {"$set": {'AWBNo' : message}}
                     db_operations.update_one(user, updated_user)
                 updated_user = {"$set": {'returnMessage' : returnMessage}}
                 db_operations.update_one(user, updated_user)
                 return send_message(message=returnMessage, phone=phone)
             elif "Enter the reason for cancellation" in value:
                 if message == '9':
-                    returnMessage = "Enter ManifestID"
+                    returnMessage = "Enter Airway Bill number (AWBNo)"
                 else:
                     reason = message
-                    manifestId = user['ManifestID']
-                    resp = cancel_order(manifestId=manifestId, reason=reason)
+                    AWBNo = user['AWBNo']
+                    resp = cancel_order(AWBNo=AWBNo, reason=reason)
                     if resp['ReplyCode'] == 0:
                         returnMessage = resp['ReplyMsg']
                     else:
-                        returnMessage = "Invalid ManifestID. Enter ManifestID again or type *0* to go back to main menu."
+                        returnMessage = "Invalid AWBNo. Enter Airway Bill number (AWBNo) again or type *0* to go back to main menu."
                 updated_user = {"$set": {'returnMessage' : returnMessage}}
                 db_operations.update_one(user, updated_user)
                 return send_message(message=returnMessage, phone=phone)
