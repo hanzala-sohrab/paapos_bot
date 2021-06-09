@@ -226,7 +226,8 @@ def home():
             if message in ["Hi", "hi", "Hello", "hello", "Hey", "hey", "0"]:
                 resp = get_profile(phone=phone[2:])
                 if resp['ReplyCode'] != 0:
-                    returnMessage = "Please get yourself registered first!\n\nRegister here\nhttp://tsite.paapos.in/"
+                    # returnMessage = "Please get yourself registered first!\n\nRegister here\nhttp://tsite.paapos.in/"
+                    return "Fp"
                 else:
                     db_operations.delete_one({'_id': int(phone)})
                     new_user = {
