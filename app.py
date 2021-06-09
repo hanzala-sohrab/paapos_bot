@@ -227,19 +227,21 @@ def home():
                 resp = get_profile(phone=phone[2:])
                 if resp['ReplyCode'] != 0:
                     returnMessage = "Please get yourself registered first!\n\nRegister here\nhttp://tsite.paapos.in/"
+                    updated_user = {"$set": {'returnMessage' : returnMessage}}
+                    db_operations.update_one(user, updated_user)
+                    return send_message(message=returnMessage, phone=phone)
                 else:
                     db_operations.delete_one({'_id': int(phone)})
+                    returnMessage = "Welcome to paapos, your preferred delivery partner\n\nTo Book Same Day Order Reply 1\nTo Book Courier Reply 2\nTo Track Your Order Reply 3\nTo cancel your order reply 4\nTo connect with our Executive reply 5\nFor feedback reply 6\n\nFor the main menu, type *0*\nFor the previous menu, type *9*"
                     new_user = {
                         '_id': int(phone),
                         "CT": "C",
-                        'cid': resp['Cid']
+                        'cid': resp['Cid'],
+                        'returnMessage' : returnMessage
                     }
                     db_operations.insert_one(new_user)
                     user = db_operations.find_one({'_id': int(phone)})
-                    returnMessage = "Welcome to paapos, your preferred delivery partner\n\nTo Book Same Day Order Reply 1\nTo Book Courier Reply 2\nTo Track Your Order Reply 3\nTo cancel your order reply 4\nTo connect with our Executive reply 5\nFor feedback reply 6\n\nFor the main menu, type *0*\nFor the previous menu, type *9*"
-                updated_user = {"$set": {'returnMessage' : returnMessage}}
-                db_operations.update_one(user, updated_user)
-                return send_message(message=returnMessage, phone=phone)
+                    return send_message(message=returnMessage, phone=phone)
             elif "Welcome" in value:
                 if message == '1':
                     returnMessage = "Please Select Your City\n\nFor Delhi Reply 1\nFor Noida Reply 2\nFor Gurgaon Reply 3\nFor Ghaziabad Reply 4\nFor Greater Noida Reply 5\nFor Faridabad Reply 6\nFor help dial 93782 93782"
