@@ -60,8 +60,9 @@ def get_profile(phone):
     #     server.write(data)
     #     server.write("\n")
 
-    resp = requests.post(url, headers=headers, data=data).text
-    return json.loads(resp)
+    resp = requests.post(url, headers=headers, data=data)
+    print(resp.json())
+    return json.loads(resp.text)
 
 def get_rate_card(dim, amt, wt, sender, receiver, cid, ct, pin=""):
     url = foo.getRateCard
