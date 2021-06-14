@@ -38,6 +38,43 @@ def send_message(message, phone):
     resp = requests.post(url, headers=headers, data=data).text
     return json.loads(resp)
 
+def get_otp(MobileNo, Type="SignUp"):
+    url = foo.getOTP
+
+    headers = CaseInsensitiveDict()
+    headers["AuthKey"] = foo.TAuthKey
+    headers["Content-Type"] = "application/json"
+
+    data = {
+        "MobileNo": MobileNo,
+        "Type": Type
+    }
+
+    data = json.dumps(data)
+
+    resp = requests.post(url, headers=headers, data=data).text
+    return json.loads(resp)
+
+def sign_up(MobileNo, password, OTP, Channel="Bot", Type="Signup"):
+    url = foo.signUp
+
+    headers = CaseInsensitiveDict()
+    headers["AuthKey"] = foo.TAuthKey
+    headers["Content-Type"] = "application/json"
+
+    data = {
+        "MobileNo": int(MobileNo),
+        "password": password,
+        "OTP": OTP,
+        "Channel": Channel,
+        "Type": Type
+    }
+
+    data = json.dumps(data)
+
+    resp = requests.post(url, headers=headers, data=data).text
+    return json.loads(resp)
+
 def get_profile(phone):
     url = foo.getProfile
 
@@ -226,7 +263,8 @@ def home():
             if message in ["Hi", "hi", "Hello", "hello", "Hey", "hey", "0"]:
                 resp = get_profile(phone=phone[2:])
                 if resp['ReplyCode'] != 0:
-                    returnMessage = "Please get yourself registered first!\n\nRegister here\nhttp://tsite.paapos.in/"
+                    returnMessage = "Please get yourself registered first!\n\nType *1* to register"
+                    # resp = get_otp(MobileNo=phone, Type="SignUp")
                 else:
                     db_operations.delete_one({'_id': int(phone)})
                     new_user = {
@@ -237,6 +275,30 @@ def home():
                     db_operations.insert_one(new_user)
                     user = db_operations.find_one({'_id': int(phone)})
                     returnMessage = "Welcome to paapos, your preferred delivery partner\n\nTo Book Same Day Order Reply 1\nTo Book Courier Reply 2\nTo Track Your Order Reply 3\nTo cancel your order reply 4\nTo connect with our Executive reply 5\nFor feedback reply 6\n\nFor the main menu, type *0*\nFor the previous menu, type *9*"
+                updated_user = {"$set": {'returnMessage' : returnMessage}}
+                db_operations.update_one(user, updated_user)
+                return send_message(message=returnMessage, phone=phone)
+            elif "Please get yourself registered first" in value:
+                if message == '1':
+                    resp = get_otp(MobileNo=phone, Type="SignUp")
+                    returnMessage = "You must have received an OTP from Paapos. Enter that OTP here"
+                    updated_user = {"$set": {'returnMessage' : returnMessage}}
+                    db_operations.update_one(user, updated_user)
+                    return send_message(message=returnMessage, phone=phone)
+            elif "Enter that OTP here" in value:
+                resp = sign_up(MobileNo=phone, password="Foobar2021", OTP=message)
+                if resp['ReplyCode'] != 0:
+                    db_operations.delete_one({'_id': int(phone)})
+                    new_user = {
+                        '_id': int(phone),
+                        "CT": "C",
+                        'cid': resp['Cid']
+                    }
+                    db_operations.insert_one(new_user)
+                    user = db_operations.find_one({'_id': int(phone)})
+                    returnMessage = "Welcome to paapos, your preferred delivery partner\n\nTo Book Same Day Order Reply 1\nTo Book Courier Reply 2\nTo Track Your Order Reply 3\nTo cancel your order reply 4\nTo connect with our Executive reply 5\nFor feedback reply 6\n\nFor the main menu, type *0*\nFor the previous menu, type *9*"
+                else:
+                    returnMessage = "Invalid OTP!\nPlease get yourself registered first!\n\nType *1* to register"
                 updated_user = {"$set": {'returnMessage' : returnMessage}}
                 db_operations.update_one(user, updated_user)
                 return send_message(message=returnMessage, phone=phone)
@@ -1753,7 +1815,8 @@ def home():
             else:
                 resp = get_profile(phone=phone[2:])
                 if resp['ReplyCode'] != 0:
-                    returnMessage = "Please get yourself registered first!\n\nRegister here\nhttp://tsite.paapos.in/"
+                    returnMessage = "Please get yourself registered first!\n\nType *1* to register"
+                    resp = get_otp(MobileNo=phone, Type="SignUp")
                 else:
                     db_operations.delete_one({'_id': int(phone)})
                     new_user = {
