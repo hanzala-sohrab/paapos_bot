@@ -52,8 +52,9 @@ def get_otp(MobileNo, Type="Signup"):
 
     data = json.dumps(data)
 
-    resp = requests.post(url, headers=headers, data=data).text
-    return json.loads(resp)
+    resp = requests.post(url, headers=headers, data=data)
+    print(resp.json())
+    return json.loads(resp.text)
 
 def sign_up(MobileNo, password, OTP, Channel="Bot", Type="Signup"):
     url = foo.signUp
