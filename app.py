@@ -293,7 +293,7 @@ def home():
                     if len(message) != 10:
                         raise Exception
                     mob = int(message)
-                    resp = get_otp(MobileNo=message, Type="SignUp")
+                    resp = get_otp(MobileNo="91"+message, Type="SignUp")
                     returnMessage = "You must have received an OTP from Paapos. Enter that OTP here"
                     updated_user = {"$set": {'returnMessage' : returnMessage, 'UserMobileNo' : message}}
                     db_operations.update_one(user, updated_user)
