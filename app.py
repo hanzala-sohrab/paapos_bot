@@ -280,7 +280,7 @@ def home():
                 return send_message(message=returnMessage, phone=phone)
             elif "Please get yourself registered first" in value:
                 if message == '1':
-                    resp = get_otp(MobileNo=phone, Type="SignUp")
+                    resp = get_otp(MobileNo=phone, Type="Signup")
                     returnMessage = "You must have received an OTP from Paapos. Enter that OTP here"
                     updated_user = {"$set": {'returnMessage' : returnMessage}}
                     db_operations.update_one(user, updated_user)
