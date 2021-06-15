@@ -52,8 +52,14 @@ def get_otp(MobileNo, Type="Signup"):
 
     data = json.dumps(data)
 
+<<<<<<< HEAD
     resp = requests.post(url, headers=headers, data=data).text
     return json.loads(resp)
+=======
+    resp = requests.post(url, headers=headers, data=data)
+    print(resp.json())
+    return json.loads(resp.text)
+>>>>>>> 8ebf7e5af8de8b136cf84d3262e4900c3ac5a784
 
 def sign_up(MobileNo, password, OTP, Channel="Bot", Type="Signup"):
     url = foo.signUp
@@ -264,6 +270,9 @@ def home():
                 resp = get_profile(phone=phone[2:])
                 if resp['ReplyCode'] != 0:
                     returnMessage = "Please get yourself registered first!\n\nType *1* to register"
+<<<<<<< HEAD
+=======
+                    # resp = get_otp(MobileNo=phone, Type="SignUp")
                 else:
                     db_operations.delete_one({'_id': int(phone)})
                     new_user = {
@@ -274,6 +283,53 @@ def home():
                     db_operations.insert_one(new_user)
                     user = db_operations.find_one({'_id': int(phone)})
                     returnMessage = "Welcome to paapos, your preferred delivery partner\n\nTo Book Same Day Order Reply 1\nTo Book Courier Reply 2\nTo Track Your Order Reply 3\nTo cancel your order reply 4\nTo connect with our Executive reply 5\nFor feedback reply 6\n\nFor the main menu, type *0*\nFor the previous menu, type *9*"
+                updated_user = {"$set": {'returnMessage' : returnMessage}}
+                db_operations.update_one(user, updated_user)
+                return send_message(message=returnMessage, phone=phone)
+            elif "Please get yourself registered first" in value:
+                if message == '1':
+<<<<<<< HEAD
+                    resp = get_otp(MobileNo=phone, Type="Signup")
+=======
+                    # resp = get_otp(MobileNo=phone, Type="SignUp")
+                    # returnMessage = "You must have received an OTP from Paapos. Enter that OTP here"
+                    returnMessage = "Enter the mobile number on which you'll receive an OTP"
+>>>>>>> 8ebf7e5af8de8b136cf84d3262e4900c3ac5a784
+                else:
+                    returnMessage = "Please get yourself registered first!\n\nType *1* to register"
+                updated_user = {"$set": {'returnMessage' : returnMessage}}
+                db_operations.update_one(user, updated_user)
+                return send_message(message=returnMessage, phone=phone)
+            elif "Enter the mobile number on which you'll receive an OTP" in value:
+                try:
+                    if len(message) != 10:
+                        raise Exception
+                    mob = int(message)
+                    resp = get_otp(MobileNo=message, Type="Signup")
+>>>>>>> 215f9bb2bc7db8db0aee3cb0a1b50bea7767b361
+                    returnMessage = "You must have received an OTP from Paapos. Enter that OTP here"
+                    updated_user = {"$set": {'returnMessage' : returnMessage, 'UserMobileNo' : message}}
+                    db_operations.update_one(user, updated_user)
+                    return send_message(message=returnMessage, phone=phone)
+                except:
+                    returnMessage = "Invalid mobile number!\nPlease Enter the mobile number on which you'll receive an OTP, again"
+                    updated_user = {"$set": {'returnMessage' : returnMessage}}
+                    db_operations.update_one(user, updated_user)
+                    return send_message(message=returnMessage, phone=phone)
+            elif "Enter that OTP here" in value:
+                resp = sign_up(MobileNo=user['UserMobileNo'], password="Foobar2021", OTP=message)
+                if resp['ReplyCode'] != 0:
+                    db_operations.delete_one({'_id': int(phone)})
+                    new_user = {
+                        '_id': int(phone),
+                        "CT": "C",
+                        'cid': resp['Cid']
+                    }
+                    db_operations.insert_one(new_user)
+                    user = db_operations.find_one({'_id': int(phone)})
+                    returnMessage = "Welcome to paapos, your preferred delivery partner\n\nTo Book Same Day Order Reply 1\nTo Book Courier Reply 2\nTo Track Your Order Reply 3\nTo cancel your order reply 4\nTo connect with our Executive reply 5\nFor feedback reply 6\n\nFor the main menu, type *0*\nFor the previous menu, type *9*"
+                else:
+                    returnMessage = "Invalid OTP!\nPlease get yourself registered first!\n\nType *1* to register"
                 updated_user = {"$set": {'returnMessage' : returnMessage}}
                 db_operations.update_one(user, updated_user)
                 return send_message(message=returnMessage, phone=phone)
@@ -1812,7 +1868,20 @@ def home():
                 db_operations.update_one(user, updated_user)
                 return send_message(message=returnMessage, phone=phone)
             else:
-                returnMessage = "Welcome to paapos, your preferred delivery partner\n\nTo Book Same Day Order Reply 1\nTo Book Courier Reply 2\nTo Track Your Order Reply 3\nTo cancel your order reply 4\nTo connect with our Executive reply 5\nFor feedback reply 6\n\nFor the main menu, type *0*\nFor the previous menu, type *9*"
+                resp = get_profile(phone=phone[2:])
+                if resp['ReplyCode'] != 0:
+                    returnMessage = "Please get yourself registered first!\n\nType *1* to register"
+                    resp = get_otp(MobileNo=phone, Type="SignUp")
+                else:
+                    db_operations.delete_one({'_id': int(phone)})
+                    new_user = {
+                        '_id': int(phone),
+                        "CT": "C",
+                        'cid': resp['Cid']
+                    }
+                    db_operations.insert_one(new_user)
+                    user = db_operations.find_one({'_id': int(phone)})
+                    returnMessage = "Welcome to paapos, your preferred delivery partner\n\nTo Book Same Day Order Reply 1\nTo Book Courier Reply 2\nTo Track Your Order Reply 3\nTo cancel your order reply 4\nTo connect with our Executive reply 5\nFor feedback reply 6\n\nFor the main menu, type *0*\nFor the previous menu, type *9*"
                 updated_user = {"$set": {'returnMessage' : returnMessage}}
                 db_operations.update_one(user, updated_user)
                 return send_message(message=returnMessage, phone=phone)
