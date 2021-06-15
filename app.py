@@ -280,13 +280,31 @@ def home():
                 return send_message(message=returnMessage, phone=phone)
             elif "Please get yourself registered first" in value:
                 if message == '1':
-                    resp = get_otp(MobileNo=phone, Type="SignUp")
+                    # resp = get_otp(MobileNo=phone, Type="SignUp")
+                    # returnMessage = "You must have received an OTP from Paapos. Enter that OTP here"
+                    returnMessage = "Enter the mobile number on which you'll receive an OTP"
+                else:
+                    returnMessage = "Please get yourself registered first!\n\nType *1* to register"
+                updated_user = {"$set": {'returnMessage' : returnMessage}}
+                db_operations.update_one(user, updated_user)
+                return send_message(message=returnMessage, phone=phone)
+            elif "Enter the mobile number on which you'll receive an OTP" in value:
+                try:
+                    if len(message) != 10:
+                        raise Exception
+                    mob = int(message)
+                    resp = get_otp(MobileNo=message, Type="SignUp")
                     returnMessage = "You must have received an OTP from Paapos. Enter that OTP here"
+                    updated_user = {"$set": {'returnMessage' : returnMessage, 'UserMobileNo' : message}}
+                    db_operations.update_one(user, updated_user)
+                    return send_message(message=returnMessage, phone=phone)
+                except:
+                    returnMessage = "Invalid mobile number!\nPlease Enter the mobile number on which you'll receive an OTP, again"
                     updated_user = {"$set": {'returnMessage' : returnMessage}}
                     db_operations.update_one(user, updated_user)
                     return send_message(message=returnMessage, phone=phone)
             elif "Enter that OTP here" in value:
-                resp = sign_up(MobileNo=phone, password="Foobar2021", OTP=message)
+                resp = sign_up(MobileNo=user['UserMobileNo'], password="Foobar2021", OTP=message)
                 if resp['ReplyCode'] != 0:
                     db_operations.delete_one({'_id': int(phone)})
                     new_user = {
