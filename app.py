@@ -38,7 +38,7 @@ def send_message(message, phone):
     resp = requests.post(url, headers=headers, data=data).text
     return json.loads(resp)
 
-def get_otp(MobileNo, Type="SignUp"):
+def get_otp(MobileNo, Type="Signup"):
     url = foo.getOTP
 
     headers = CaseInsensitiveDict()
@@ -293,7 +293,7 @@ def home():
                     if len(message) != 10:
                         raise Exception
                     mob = int(message)
-                    resp = get_otp(MobileNo="91"+message, Type="SignUp")
+                    resp = get_otp(MobileNo=message, Type="Signup")
                     returnMessage = "You must have received an OTP from Paapos. Enter that OTP here"
                     updated_user = {"$set": {'returnMessage' : returnMessage, 'UserMobileNo' : message}}
                     db_operations.update_one(user, updated_user)
