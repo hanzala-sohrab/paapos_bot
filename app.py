@@ -42,7 +42,7 @@ def get_otp(MobileNo, Type="Signup"):
     url = foo.getOTP
 
     headers = CaseInsensitiveDict()
-    headers["AuthKey"] = foo.TAuthKey
+    headers["AuthKey"] = foo.AuthKey
     headers["Content-Type"] = "application/json"
 
     data = {
@@ -59,7 +59,7 @@ def sign_up(MobileNo, password, OTP, Channel="Bot", Type="Signup"):
     url = foo.signUp
 
     headers = CaseInsensitiveDict()
-    headers["AuthKey"] = foo.TAuthKey
+    headers["AuthKey"] = foo.AuthKey
     headers["Content-Type"] = "application/json"
 
     data = {
