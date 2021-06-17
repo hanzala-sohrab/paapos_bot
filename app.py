@@ -319,7 +319,7 @@ def home():
                 db_operations.update_one(user, updated_user)
                 return send_message(message=returnMessage, phone=phone)
             elif "Enter that OTP here" in value:
-                resp = sign_up(MobileNo=phone, password="Foobar2021", OTP=message)
+                resp = sign_up(MobileNo=phone[2:], password="Foobar2021", OTP=message)
                 if resp['ReplyCode'] != 0:
                     db_operations.delete_one({'_id': int(phone)})
                     new_user = {
