@@ -279,7 +279,7 @@ def home():
                 return send_message(message=returnMessage, phone=phone)
             elif "Please get yourself registered first" in value:
                 if message == '1':
-                    resp = get_otp(MobileNo=phone, Type="SignUp")
+                    resp = get_otp(MobileNo=phone[2:], Type="SignUp")
                     returnMessage = "You must have received an OTP from Paapos. Enter that OTP here"
                 else:
                     returnMessage = "Please get yourself registered first!\n\nType *1* to register"
