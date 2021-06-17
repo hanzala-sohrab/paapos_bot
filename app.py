@@ -242,6 +242,38 @@ def service_check(pin, origin):
     resp = requests.post(url, headers=headers, data=data).text
     return json.loads(resp)
 
+def calling_api(_from, _to):
+    url = foo.callingAPI
+
+    headers = CaseInsensitiveDict()
+    headers["Content-Type"] = "application/json"
+
+    data = {
+        "sourcetype": "0",
+        "customivr": true,
+        "credittype": "2",
+        "filetype": "2",
+        "ukey": "2HzTIdqB2viok3BiDUnjlkvXY",
+        "serviceno": "1205179224",
+        "ivrtemplateid": "152",
+        "agentretryatmpt": 0,
+        "retryduration": 5,
+        "custretryatmpt": 0,
+        "custcli": "1205179224",
+        "isrefno": true,
+        "msisdnlist": [
+            {
+                "phoneno": _from,
+                "agentno": _to
+            }
+        ]
+    }
+
+    data = json.dumps(data)
+
+    resp = requests.post(url, headers=headers, data=data).text
+    return json.loads(resp)
+
 @app.route('/', methods=['POST'])
 def home():
     if request.method == 'POST':
@@ -326,6 +358,8 @@ def home():
                     return send_message(message=returnMessage, phone=phone)
                 elif message == '5':
                     returnMessage = "Please wait while we are connecting your call with our Executive.\n\nType *0* to go back to main menu"
+                    # 9378293782
+                    resp = calling_api(phone[2:], "9378293782")
                     updated_user = {"$set": {'returnMessage' : returnMessage}}
                     db_operations.update_one(user, updated_user)
                     return send_message(message=returnMessage, phone=phone)
