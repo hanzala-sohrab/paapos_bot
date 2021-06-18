@@ -38,6 +38,43 @@ def send_message(message, phone):
     resp = requests.post(url, headers=headers, data=data).text
     return json.loads(resp)
 
+def get_otp(MobileNo, Type="Signup"):
+    url = foo.getOTP
+
+    headers = CaseInsensitiveDict()
+    headers["AuthKey"] = foo.AuthKey
+    headers["Content-Type"] = "application/json"
+
+    data = {
+        "MobileNo": MobileNo,
+        "Type": Type
+    }
+
+    data = json.dumps(data)
+
+    resp = requests.post(url, headers=headers, data=data).text
+    return json.loads(resp)
+
+def sign_up(MobileNo, password, OTP, Channel="Bot", Type="Signup"):
+    url = foo.signUp
+
+    headers = CaseInsensitiveDict()
+    headers["AuthKey"] = foo.AuthKey
+    headers["Content-Type"] = "application/json"
+
+    data = {
+        "MobileNo": int(MobileNo),
+        "password": password,
+        "OTP": OTP,
+        "Channel": Channel,
+        "Type": Type
+    }
+
+    data = json.dumps(data)
+
+    resp = requests.post(url, headers=headers, data=data).text
+    return json.loads(resp)
+
 def get_profile(phone):
     url = foo.getProfile
 
@@ -98,7 +135,7 @@ def get_rate_card(dim, amt, wt, sender, receiver, cid, ct, pin=""):
     resp = requests.post(url, headers=headers, data=data).text
     return json.loads(resp)
 
-def cancel_order(AWBNo, reason):
+def cancel_order(AWBNo, reason, CID):
     url = foo.cancelOrder
 
     headers = CaseInsensitiveDict()
@@ -107,7 +144,8 @@ def cancel_order(AWBNo, reason):
 
     data = {
         "AWBNo": AWBNo,
-        "Reason": reason
+        "Reason": reason,
+        "CID": CID
     }
 
     data = json.dumps(data)
@@ -204,6 +242,38 @@ def service_check(pin, origin):
     resp = requests.post(url, headers=headers, data=data).text
     return json.loads(resp)
 
+def calling_api(_from, _to):
+    url = foo.callingAPI
+
+    headers = CaseInsensitiveDict()
+    headers["Content-Type"] = "application/json"
+
+    data = {
+        "sourcetype": "0",
+        "customivr": true,
+        "credittype": "2",
+        "filetype": "2",
+        "ukey": "2HzTIdqB2viok3BiDUnjlkvXY",
+        "serviceno": "1205179224",
+        "ivrtemplateid": "152",
+        "agentretryatmpt": 0,
+        "retryduration": 5,
+        "custretryatmpt": 0,
+        "custcli": "1205179224",
+        "isrefno": true,
+        "msisdnlist": [
+            {
+                "phoneno": _from,
+                "agentno": _to
+            }
+        ]
+    }
+
+    data = json.dumps(data)
+
+    resp = requests.post(url, headers=headers, data=data).text
+    return json.loads(resp)
+
 @app.route('/', methods=['POST'])
 def home():
     if request.method == 'POST':
@@ -225,7 +295,7 @@ def home():
             if message in ["Hi", "hi", "Hello", "hello", "Hey", "hey", "0"]:
                 resp = get_profile(phone=phone[2:])
                 if resp['ReplyCode'] != 0:
-                    returnMessage = "Please get yourself registered first!\n\nRegister here\nhttp://tsite.paapos.in/"
+                    returnMessage = "Please get yourself registered first!\n\nType *1* to register"
                 else:
                     db_operations.delete_one({'_id': int(phone)})
                     new_user = {
@@ -236,6 +306,32 @@ def home():
                     db_operations.insert_one(new_user)
                     user = db_operations.find_one({'_id': int(phone)})
                     returnMessage = "Welcome to paapos, your preferred delivery partner\n\nTo Book Same Day Order Reply 1\nTo Book Courier Reply 2\nTo Track Your Order Reply 3\nTo cancel your order reply 4\nTo connect with our Executive reply 5\nFor feedback reply 6\n\nFor the main menu, type *0*\nFor the previous menu, type *9*"
+                updated_user = {"$set": {'returnMessage' : returnMessage}}
+                db_operations.update_one(user, updated_user)
+                return send_message(message=returnMessage, phone=phone)
+            elif "Please get yourself registered first" in value:
+                if message == '1':
+                    resp = get_otp(MobileNo=phone[2:], Type="SignUp")
+                    returnMessage = "You must have received an OTP from Paapos. Enter that OTP here"
+                else:
+                    returnMessage = "Please get yourself registered first!\n\nType *1* to register"
+                updated_user = {"$set": {'returnMessage' : returnMessage}}
+                db_operations.update_one(user, updated_user)
+                return send_message(message=returnMessage, phone=phone)
+            elif "Enter that OTP here" in value:
+                resp = sign_up(MobileNo=phone[2:], password="Foobar2021", OTP=message)
+                if resp['ReplyCode'] != 0 and resp['ReplyMsg'] != "Invalid Otp":
+                    db_operations.delete_one({'_id': int(phone)})
+                    new_user = {
+                        '_id': int(phone),
+                        "CT": "C",
+                        'cid': resp['Cid']
+                    }
+                    db_operations.insert_one(new_user)
+                    user = db_operations.find_one({'_id': int(phone)})
+                    returnMessage = "Welcome to paapos, your preferred delivery partner\n\nTo Book Same Day Order Reply 1\nTo Book Courier Reply 2\nTo Track Your Order Reply 3\nTo cancel your order reply 4\nTo connect with our Executive reply 5\nFor feedback reply 6\n\nFor the main menu, type *0*\nFor the previous menu, type *9*"
+                elif resp['ReplyMsg'] == "Invalid Otp":
+                    returnMessage = "Invalid OTP!\nPlease get yourself registered first!\n\nType *1* to register"
                 updated_user = {"$set": {'returnMessage' : returnMessage}}
                 db_operations.update_one(user, updated_user)
                 return send_message(message=returnMessage, phone=phone)
@@ -262,6 +358,8 @@ def home():
                     return send_message(message=returnMessage, phone=phone)
                 elif message == '5':
                     returnMessage = "Please wait while we are connecting your call with our Executive.\n\nType *0* to go back to main menu"
+                    # 9378293782
+                    resp = calling_api(phone[2:], "9378293782")
                     updated_user = {"$set": {'returnMessage' : returnMessage}}
                     db_operations.update_one(user, updated_user)
                     return send_message(message=returnMessage, phone=phone)
@@ -1656,7 +1754,7 @@ def home():
                         db_operations.update_one(user, updated_user)
                         return send_message(message=returnMessage, phone=phone)
             # 3 - Track order
-            elif "AWBNo" in value:
+            elif "Enter AWBNo (Airway Bill number)" in value:
                 if message == '9':
                     returnMessage = "Welcome to paapos, your preferred delivery partner\n\nTo Book Same Day Order Reply 1\nTo Book Courier Reply 2\nTo Track Your Order Reply 3\nTo cancel your order reply 4\nTo connect with our Executive reply 5\nFor feedback reply 6\n\nFor the main menu, type *0*\nFor the previous menu, type *9*"
                 else:
@@ -1670,8 +1768,8 @@ def home():
                         returnMessage += "Status: " + summary['Status'] + "\n"
                         returnMessage += "Location: " + summary['Location'] + "\n"
                         returnMessage += "Comment: " + summary['Comment'] + "\n"
-                        returnMessage += "Status code: " + summary['StatusCode'] + "\n"
-                        returnMessage += "Weight: " + summary['Weight'] + "\n"
+                        # returnMessage += "Status code: " + summary['StatusCode'] + "\n"
+                        # returnMessage += "Weight: " + summary['Weight'] + "\n"
                     else:
                         returnMessage += "\n\nPlease enter correct tracking ID booked on Paapos."
                 updated_user = {"$set": {'returnMessage' : returnMessage}}
@@ -1691,8 +1789,8 @@ def home():
                         returnMessage += "Status: " + summary['Status'] + "\n"
                         returnMessage += "Location: " + summary['Location'] + "\n"
                         returnMessage += "Comment: " + summary['Comment'] + "\n"
-                        returnMessage += "Status code: " + summary['StatusCode'] + "\n"
-                        returnMessage += "Weight: " + summary['Weight'] + "\n"
+                        # returnMessage += "Status code: " + summary['StatusCode'] + "\n"
+                        # returnMessage += "Weight: " + summary['Weight'] + "\n"
                     else:
                         returnMessage += "\n\nPlease enter correct tracking ID booked on Paapos."
                 updated_user = {"$set": {'returnMessage' : returnMessage}}
@@ -1702,20 +1800,21 @@ def home():
             elif "Enter Airway Bill number (AWBNo)" in value:
                 if message == '9':
                     returnMessage = "Welcome to paapos, your preferred delivery partner\n\nTo Book Same Day Order Reply 1\nTo Book Courier Reply 2\nTo Track Your Order Reply 3\nTo cancel your order reply 4\nTo connect with our Executive reply 5\nFor feedback reply 6\n\nFor the main menu, type *0*\nFor the previous menu, type *9*"
+                    updated_user = {"$set": {'returnMessage' : returnMessage}}
+                    db_operations.update_one(user, updated_user)
+                    return send_message(message=returnMessage, phone=phone)
                 else:
                     returnMessage = "Enter the reason for cancellation"
-                    updated_user = {"$set": {'AWBNo' : message}}
+                    updated_user = {"$set": {'returnMessage' : returnMessage, 'AWBNo' : message}}
                     db_operations.update_one(user, updated_user)
-                updated_user = {"$set": {'returnMessage' : returnMessage}}
-                db_operations.update_one(user, updated_user)
-                return send_message(message=returnMessage, phone=phone)
+                    return send_message(message=returnMessage, phone=phone)
             elif "Enter the reason for cancellation" in value:
                 if message == '9':
                     returnMessage = "Enter Airway Bill number (AWBNo)"
                 else:
                     reason = message
                     AWBNo = user['AWBNo']
-                    resp = cancel_order(AWBNo=AWBNo, reason=reason)
+                    resp = cancel_order(AWBNo=AWBNo, reason=reason, CID=user['cid'])
                     if resp['ReplyCode'] == 0:
                         returnMessage = resp['ReplyMsg']
                     else:
@@ -1745,6 +1844,11 @@ def home():
                     returnMessage = "Please wait while we are connecting your call with our Executive.\n\nType *0* to go back to main menu"
                 elif message == '0':
                     returnMessage = "Welcome to paapos, your preferred delivery partner\n\nTo Book Same Day Order Reply 1\nTo Book Courier Reply 2\nTo Track Your Order Reply 3\nTo cancel your order reply 4\nTo connect with our Executive reply 5\nFor feedback reply 6"
+                updated_user = {"$set": {'returnMessage' : returnMessage}}
+                db_operations.update_one(user, updated_user)
+                return send_message(message=returnMessage, phone=phone)
+            else:
+                returnMessage = "Welcome to paapos, your preferred delivery partner\n\nTo Book Same Day Order Reply 1\nTo Book Courier Reply 2\nTo Track Your Order Reply 3\nTo cancel your order reply 4\nTo connect with our Executive reply 5\nFor feedback reply 6\n\nFor the main menu, type *0*\nFor the previous menu, type *9*"
                 updated_user = {"$set": {'returnMessage' : returnMessage}}
                 db_operations.update_one(user, updated_user)
                 return send_message(message=returnMessage, phone=phone)
