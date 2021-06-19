@@ -320,7 +320,7 @@ def home():
                 return send_message(message=returnMessage, phone=phone)
             elif "Enter that OTP here" in value:
                 resp = sign_up(MobileNo=phone[2:], password="Foobar2021", OTP=message)
-                if resp['ReplyCode'] != 0 and resp['ReplyMsg'] != "Invalid Otp":
+                if resp['ReplyCode'] == 0:
                     db_operations.delete_one({'_id': int(phone)})
                     new_user = {
                         '_id': int(phone),
@@ -330,10 +330,8 @@ def home():
                     db_operations.insert_one(new_user)
                     user = db_operations.find_one({'_id': int(phone)})
                     returnMessage = "Welcome to paapos, your preferred delivery partner\n\nTo Book Same Day Order Reply 1\nTo Book Courier Reply 2\nTo Track Your Order Reply 3\nTo cancel your order reply 4\nTo connect with our Executive reply 5\nFor feedback reply 6\n\nFor the main menu, type *0*\nFor the previous menu, type *9*"
-                elif resp['ReplyMsg'] == "Invalid Otp":
-                    returnMessage = "Invalid OTP!\nPlease get yourself registered first!\n\nType *1* to register"
                 else:
-                    returnMessage = "Type in *Hi* in the chat"
+                    returnMessage = "Invalid OTP!\nPlease get yourself registered first!\n\nType *1* to register"
                 updated_user = {"$set": {'returnMessage' : returnMessage}}
                 db_operations.update_one(user, updated_user)
                 return send_message(message=returnMessage, phone=phone)
