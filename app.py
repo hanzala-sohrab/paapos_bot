@@ -665,7 +665,7 @@ def home():
                     updated_user = {"$set": {'returnMessage' : returnMessage, 'IsCod' : "0"}}
                     db_operations.update_one(user, updated_user)
                     return send_message(message=returnMessage, phone=phone)
-            elif "Do you want to avail insurance" in value and user["CT"] == "S":
+            elif "Do you want to avail insurance" in value:
                 if message == '9':
                     returnMessage = "Do you want us to collect payment from the customer for the products you are sending?\nFor yes reply 1\nFor no reply 2"
                     updated_user = {"$set": {'returnMessage' : returnMessage}}
