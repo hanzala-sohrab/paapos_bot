@@ -672,10 +672,10 @@ def home():
                     db_operations.update_one(user, updated_user)
                     return send_message(message=returnMessage, phone=phone)
                 else:
-                    if message in ['1', 'Yes', 'yes', 'Y', 'y']:
+                    if message == "1":
                         updated_user = {"$set": {'Insurance' : 1}}
                         db_operations.update_one(user, updated_user)
-                    else:
+                    elif message == "2":
                         updated_user = {"$set": {'Insurance' : 0}}
                         db_operations.update_one(user, updated_user)
                     amt = '0'
