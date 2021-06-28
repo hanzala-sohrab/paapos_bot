@@ -873,7 +873,7 @@ def home():
                         'price': declaredValue,
                     }
                     products.append(product)
-                    tax = "0"
+                    tax = user['tax']
                     bp = user['bp']
                     cDiscount = '0'
                     cTop = user['ctop']
