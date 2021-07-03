@@ -260,7 +260,7 @@ def calling_api(_from, _to):
         "retryduration": 5,
         "custretryatmpt": 0,
         "custcli": "1205179224",
-        "isrefno": true,
+        "isrefno": "true",
         "msisdnlist": [
             {
                 "phoneno": _from,
