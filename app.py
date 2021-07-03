@@ -272,7 +272,7 @@ def calling_api(_from, _to):
     data = json.dumps(data)
 
     resp = requests.post(url, headers=headers, data=data).text
-    return json.loads(resp)
+    return resp
 
 @app.route('/', methods=['POST'])
 def home():
