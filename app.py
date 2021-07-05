@@ -87,15 +87,6 @@ def get_profile(phone):
     }
 
     data = json.dumps(data)
-    # current_time = datetime.now()
-    # c_time = str(current_time)[11:]
-    # current_datetime = f"{current_time.day}.{current_time.month}.{current_time.year} {c_time}"
-    # with open("server.log", "a") as server:
-    #     server.write("---------------------------\n")
-    #     server.write(current_datetime)
-    #     server.write("\n")
-    #     server.write(data)
-    #     server.write("\n")
 
     resp = requests.post(url, headers=headers, data=data).text
     return json.loads(resp)
@@ -260,7 +251,7 @@ def calling_api(_from, _to):
         "retryduration": 5,
         "custretryatmpt": 0,
         "custcli": "1205179224",
-        "isrefno": true,
+        "isrefno": "true",
         "msisdnlist": [
             {
                 "phoneno": _from,
@@ -272,7 +263,7 @@ def calling_api(_from, _to):
     data = json.dumps(data)
 
     resp = requests.post(url, headers=headers, data=data).text
-    return json.loads(resp)
+    return resp
 
 @app.route('/', methods=['POST'])
 def home():
@@ -665,17 +656,17 @@ def home():
                     updated_user = {"$set": {'returnMessage' : returnMessage, 'IsCod' : "0"}}
                     db_operations.update_one(user, updated_user)
                     return send_message(message=returnMessage, phone=phone)
-            elif "Do you want to avail insurance" in value and user["CT"] == "S":
+            elif "Do you want to avail insurance" in value:
                 if message == '9':
                     returnMessage = "Do you want us to collect payment from the customer for the products you are sending?\nFor yes reply 1\nFor no reply 2"
                     updated_user = {"$set": {'returnMessage' : returnMessage}}
                     db_operations.update_one(user, updated_user)
                     return send_message(message=returnMessage, phone=phone)
                 else:
-                    if message in ['1', 'Yes', 'yes', 'Y', 'y']:
+                    if message == "1":
                         updated_user = {"$set": {'Insurance' : 1}}
                         db_operations.update_one(user, updated_user)
-                    else:
+                    elif message == "2":
                         updated_user = {"$set": {'Insurance' : 0}}
                         db_operations.update_one(user, updated_user)
                     amt = '0'
@@ -873,7 +864,7 @@ def home():
                         'price': declaredValue,
                     }
                     products.append(product)
-                    tax = "0"
+                    tax = user['tax']
                     bp = user['bp']
                     cDiscount = '0'
                     cTop = user['ctop']
