@@ -87,15 +87,6 @@ def get_profile(phone):
     }
 
     data = json.dumps(data)
-    # current_time = datetime.now()
-    # c_time = str(current_time)[11:]
-    # current_datetime = f"{current_time.day}.{current_time.month}.{current_time.year} {c_time}"
-    # with open("server.log", "a") as server:
-    #     server.write("---------------------------\n")
-    #     server.write(current_datetime)
-    #     server.write("\n")
-    #     server.write(data)
-    #     server.write("\n")
 
     resp = requests.post(url, headers=headers, data=data).text
     return json.loads(resp)
